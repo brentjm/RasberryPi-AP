@@ -19,9 +19,9 @@ sudo apt install ansible
 ```
 
 3. Clone this repository `git clone https://github.com/icecr4ck/rpi_access_point`
-4. Modify the configuration in `access_point/vars/main.yml` (ssid, passphrase, interfaces etc...)
-5. The passphrase can be encrypted with `ansible-vault encrypt_string <passphrase>`
-6. Run `ansible-playbook --ask-vault-pass setup.yml -e target=local`
+4. Modify the configuration in `access_point/vars/main.yml` (ssid, interfaces etc...)
+5. Encrypt the Wifi passphrase with `ansible-vault encrypt_string -n passphrase --output access_point/vars/secret.yml <passphrase>`
+6. Run `ansible-playbook --ask-vault-pass setup.yml -e target=localhost`
 7. Reboot and enjoy !
 
 ## Install Raspbian on a Raspberry Pi

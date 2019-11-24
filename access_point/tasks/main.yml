@@ -51,6 +51,11 @@
           name: dnsmasq
           state: restarted 
 
+- name: Include secret file
+  include_vars:
+          file: secret.yml
+          name: secret
+
 - name: Copy hostapd.conf 
   template:
           src: hostapd.conf.j2
@@ -88,7 +93,7 @@
           chain: FORWARD
           in_interface: "{{ ethernet.interface }}"
           out_interface: "{{ wireless.interface }}"
-          ctstate: RELATED, ESTABLISHED
+          ctstate: ESTABLISHED,RELATED
           jump: ACCEPT
 
 - name: Add iptables rule to forward traffic from wireless to ethernet interface

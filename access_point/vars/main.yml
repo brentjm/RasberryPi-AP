@@ -14,7 +14,6 @@ wireless:
         channel: 7
         wpa:
                 version: 2
-                passphrase:
                 key_mgmt: WPA-PSK
                 pairwise: TKIP
                 rsn_pairwise: CCMP
