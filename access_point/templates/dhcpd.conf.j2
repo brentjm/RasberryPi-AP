@@ -1,0 +1,7 @@
+# {{ ansible_managed }}
+
+denyinterfaces {{ wireless.interface }}
+denyinterfaces {{ ethernet.interface }}
+
+interface={{ bridge.interface }}
+	static ip_address={{ bridge.ipv4.address }}/{{ bridge.ipv4.mask }}

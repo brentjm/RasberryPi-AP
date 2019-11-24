@@ -1,0 +1,108 @@
+---
+
+- name: Update and upgrade system
+  apt:
+          update_cache: yes
+          upgrade: dist
+
+- name: Install necessary packages
+  apt:
+          name: "{{ packages }}"
+          state: present
+
+- name: Stop dnsmasq service
+  service:
+          name: dnsmasq
+          state: stopped
+
+- name: Stop hostapd service
+  service:
+          name: hostapd
+          state: stopped
+
+- name: Add bridge interface
+  shell: /sbin/brctl addbr {{ bridge.interface }}
+
+- name: Add ethernet interface to bridge
+  shell: /sbin/brctl addif {{ bridge.interface }} {{ ethernet.interface }}
+
+- name: Copy interfaces file 
+  template:
+          src: interfaces.j2
+          dest: /etc/network/interfaces
+
+- name: Copy dhcpd.conf
+  template:
+          src: dhcpd.conf.j2
+          dest: /etc/dhcpd.conf
+
+- name: Copy dnsmasq.conf 
+  template:
+          src: dnsmasq.conf.j2
+          dest: /etc/dnsmasq.conf
+
+- name: Restart dhcpcd service
+  service:
+          name: dhcpcd
+          state: restarted 
+
+- name: Restart dnsmasq service
+  service:
+          name: dnsmasq
+          state: restarted 
+
+- name: Copy hostapd.conf 
+  template:
+          src: hostapd.conf.j2
+          dest: /etc/hostapd/hostapd.conf
+
+- name: Copy hostapd default configuration
+  copy:
+          src: hostapd
+          dest: /etc/default/hostapd
+
+- name: Enable and start hostapd service
+  systemd:
+          name: hostapd
+          masked: no
+          enabled: yes
+          state: restarted
+ 
+- name: Enable IP forwarding
+  sysctl:
+          name: net.ipv4.ip_forward
+          value: '1'
+          sysctl_set: yes
+          state: present
+          reload: yes  
+
+- name: Add iptables rule for POSTROUTING
+  iptables:
+          table: nat
+          chain: POSTROUTING
+          out_interface: "{{ ethernet.interface }}"
+          jump: MASQUERADE
+
+- name: Add iptables rule to forward traffic from ethernet to wireless interface
+  iptables:
+          chain: FORWARD
+          in_interface: "{{ ethernet.interface }}"
+          out_interface: "{{ wireless.interface }}"
+          ctstate: RELATED, ESTABLISHED
+          jump: ACCEPT
+
+- name: Add iptables rule to forward traffic from wireless to ethernet interface
+  iptables:
+          chain: FORWARD
+          in_interface: "{{ wireless.interface }}"
+          out_interface: "{{ ethernet.interface }}"
+          jump: ACCEPT
+
+- name: Save iptables rules
+  shell: "iptables-save > /etc/iptables.ipv4.nat"
+
+- name: Load iptables rules at startup
+  lineinfile:
+          dest: /etc/rc.local
+          insertbefore: "^exit 0"
+          line: "iptables-restore < /etc/iptables.ipv4.nat"

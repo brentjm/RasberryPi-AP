@@ -1,0 +1,34 @@
+---
+
+packages:
+        - dnsmasq
+        - hostapd
+        - bridge-utils
+        - iptables-persistent
+
+wireless:
+        interface: wlan0
+        driver: nl80211
+        ssid:
+        mode: g # a = 5 Ghz and b/g = 2.4 Ghz
+        channel: 7
+        wpa:
+                version: 2
+                passphrase:
+                key_mgmt: WPA-PSK
+                pairwise: TKIP
+                rsn_pairwise: CCMP
+
+ethernet:
+        interface: eth0
+
+bridge:
+        interface: br0
+        ipv4:
+                address: 192.168.10.1
+                mask: 24
+        dhcprange:
+                start: 192.168.10.100
+                end: 192.168.10.200
+                mask: 255.255.255.0
+                lease_time: 24h
