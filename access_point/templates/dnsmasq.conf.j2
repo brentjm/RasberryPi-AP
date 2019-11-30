@@ -1,4 +1,4 @@
 # {{ ansible_managed }} 
 
-interface={{ bridge.interface }}
-dhcp-range={{ bridge.dhcprange.start }},{{ bridge.dhcprange.end }},{{ bridge.dhcprange.mask }},{{ bridge.dhcprange.lease_time }}
+interface={{ wireless.interface }}
+dhcp-range={{ wireless.dhcprange.start }},{{ wireless.dhcprange.end }},{{ wireless.dhcprange.mask }},{{ wireless.dhcprange.lease_time }}
