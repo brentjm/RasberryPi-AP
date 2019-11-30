@@ -26,15 +26,10 @@
 - name: Add ethernet interface to bridge
   shell: /sbin/brctl addif {{ bridge.interface }} {{ ethernet.interface }}
 
-- name: Copy interfaces file 
+- name: Copy dhcpcd.conf
   template:
-          src: interfaces.j2
-          dest: /etc/network/interfaces
-
-- name: Copy dhcpd.conf
-  template:
-          src: dhcpd.conf.j2
-          dest: /etc/dhcpd.conf
+          src: dhcpcd.conf.j2
+          dest: /etc/dhcpcd.conf
 
 - name: Copy dnsmasq.conf 
   template:
@@ -49,7 +44,27 @@
 - name: Restart dnsmasq service
   service:
           name: dnsmasq
-          state: restarted 
+          state: restarted
+
+- name: Copy bridge-br0.netdev
+  template:
+          src: bridge-br0.netdev.j2
+          dest: /etc/systemd/network/bridge-br0.netdev
+
+- name: Copy bridge-br0.network
+  template:
+          src: bridge-br0.network.j2
+          dest: /etc/systemd/network/bridge-br0.network
+
+- name: Copy bridge-br0-slave.network
+  template:
+          src: bridge-br0-slave.network.j2
+          dest: /etc/systemd/network/bridge-br0-slave.network
+
+- name: Restart dnsmasq service
+  service:
+          name: systemd-networkd
+          state: restarted
 
 - name: Include secret file
   include_vars:

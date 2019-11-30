@@ -1,8 +1,0 @@
-# {{ ansible_managed }} 
-
-auto lo
-iface lo inet loopback
-
-auto {{ bridge.interface }}
-iface {{ bridge.interface }} inet manual
-bridge_ports {{ ethernet.interface }} {{ wireless.interface }}

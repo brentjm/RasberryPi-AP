@@ -1,0 +1,9 @@
+# {{ ansible_managed }}
+
+[Match]
+Name={{ bridge.interface }}
+
+[Network]
+Address={{ bridge.ipv4.address }}/{{ bridge.ipv4.mask }}
+Gateway={{ bridge.gateway }}
+DNS={{ bridge.dns }}

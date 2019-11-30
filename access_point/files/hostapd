@@ -1,3 +1,4 @@
 # {{ ansible_managed }}
 
 DAEMON_CONF="/etc/hostapd/hostapd.conf"
+DAEMON_OPTS="-dd -t -f /var/log/hostapd.log"

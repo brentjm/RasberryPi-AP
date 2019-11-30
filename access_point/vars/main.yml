@@ -8,10 +8,13 @@ packages:
 
 wireless:
         interface: wlan0
+        ipv4:
+                address: 192.168.10.1
+                mask: 24
         driver: nl80211
         ssid:
         mode: g # a = 5 Ghz and b/g = 2.4 Ghz
-        channel: 7
+        channel: 6
         wpa:
                 version: 2
                 key_mgmt: WPA-PSK
@@ -24,7 +27,7 @@ ethernet:
 bridge:
         interface: br0
         ipv4:
-                address: 192.168.10.1
+                address: 192.168.1.10
                 mask: 24
         dhcprange:
                 start: 192.168.10.100

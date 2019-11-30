@@ -1,0 +1,7 @@
+# {{ ansible_managed }}
+
+denyinterfaces {{ wireless.interface }}
+denyinterfaces {{ ethernet.interface }}
+
+interface={{ wireless.interface }}
+	static ip_address={{ wireless.ipv4.address }}/{{ wireless.ipv4.mask }}
