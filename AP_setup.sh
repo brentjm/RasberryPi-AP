@@ -37,7 +37,7 @@ systemctl enable hostapd
 cat dhcpcd.conf >> /etc/dhcpcd.conf
 
 # Uncomment the port forwarding rule.
-sed -i -e "s/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/"
+sed -i -e "s/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/" /etc/sysctl.conf
 
 # Enable port forwarding and save.
 iptables -t nat -C POSTROUTING -o eth0 -j MASQUERADE || iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
