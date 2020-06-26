@@ -34,15 +34,20 @@ systemctl unmask hostapd
 systemctl enable hostapd
 
 # Append the dhcp configuration into the system file.
-cat dhcpcd.conf >> /etc/dhcpcd.conf
+# Changed from cat to sed, easier to confirm the reverse
+#cat dhcpcd.conf >> /etc/dhcpcd.conf
+sed -i -e '$ainterface wlan0' /etc/dhcpcd.conf
+sed -i -e '$a    static ip_address=192.168.4.1/24' /etc/dhcpcd.conf
+sed -i -e '$a    nohook wpa_supplicant' /etc/dhcpcd.conf
+sed -i -e '$a    denyinterfaces wlan0' /etc/dhcpcd.conf
 
 # Uncomment the port forwarding rule.
-sed -i -e "s/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/"
+sed -i -e "s/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/" /etc/sysctl.conf
 
 # Enable port forwarding and save.
 iptables -t nat -C POSTROUTING -o eth0 -j MASQUERADE || iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 iptables-save > /etc/iptables.ipv4.nat
-sed -e "/exit 0/iiptables-restore < /etc/iptables.ipv4.nat/" /etc/rc.local
+sed -e '/exit 0/iiptables-restore < /etc/iptables.ipv4.nat/' /etc/rc.local
 
 # Backup the old DNS configuration and copy over the new configuration.
 mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig
