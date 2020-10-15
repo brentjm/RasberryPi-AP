@@ -2,10 +2,10 @@
 interface=wlan0
 
 # Pool of IP addresses served via DHCP
-dhcp-range=192.168.4.2,192.168.4.20,255.255.255.0,24h
+dhcp-range=192.168.number.2,192.168.number.20,255.255.255.0,24h
 
 # Local wireless DNS domain
 domain=wlan
 
 # Alias for this router
-address=/gw.wlan/192.168.4.1
+address=/gw.wlan/192.168.number.1
