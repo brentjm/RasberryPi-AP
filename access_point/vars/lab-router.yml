@@ -34,5 +34,5 @@ bridge:
         ipv4:
                 address: 192.168.1.10
                 mask: 24
-        gateway: 10.131.72.253
-        dns: 192.43.213.1
+        gateway: 192.168.1.1
+        dns: 192.168.1.1
