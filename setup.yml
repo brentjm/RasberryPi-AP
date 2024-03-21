@@ -4,4 +4,4 @@
   hosts: "{{ target }}"
   become: yes
   roles:
-          - role: access_point
+    - role: access_point
