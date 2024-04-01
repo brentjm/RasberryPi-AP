@@ -17,9 +17,9 @@ wireless:
                 mask: 255.255.255.0
                 lease_time: 24h
         driver: nl80211
-        ssid:
+        ssid: disso
         mode: g # a = 5 Ghz and b/g = 2.4 Ghz
-        channel: 6
+        channel: 7
         wpa:
                 version: 2
                 key_mgmt: WPA-PSK
