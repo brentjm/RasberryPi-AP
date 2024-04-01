@@ -20,12 +20,6 @@
           name: hostapd
           state: stopped
 
-- name: Add bridge interface
-  shell: /sbin/brctl addbr {{ bridge.interface }}
-
-- name: Add ethernet interface to bridge
-  shell: /sbin/brctl addif {{ bridge.interface }} {{ ethernet.interface }}
-
 - name: Copy dhcpcd.conf
   template:
           src: dhcpcd.conf.j2
@@ -36,47 +30,44 @@
           src: dnsmasq.conf.j2
           dest: /etc/dnsmasq.conf
 
-- name: Restart dhcpcd service
-  service:
-          name: dhcpcd
-          state: restarted 
+- name: Add bridge interface
+  shell: /sbin/brctl addbr {{ bridge.interface }}
 
-- name: Restart dnsmasq service
-  service:
-          name: dnsmasq
-          state: restarted
+- name: Add ethernet interface to bridge
+  shell: /sbin/brctl addif {{ bridge.interface }} {{ ethernet.interface }}
 
-- name: Copy bridge-br0.netdev
+#- name: Copy bridge-br0.netdev
+#  template:
+#          src: bridge-br0.netdev.j2
+#          dest: /etc/systemd/network/bridge-br0.netdev
+#
+#- name: Copy bridge-br0.network
+#  template:
+#          src: bridge-br0.network.j2
+#          dest: /etc/systemd/network/bridge-br0.network
+#
+#- name: Copy bridge-br0-slave.network
+#  template:
+#          src: bridge-br0-slave.network.j2
+#          dest: /etc/systemd/network/bridge-br0-slave.network
+#
+#- name: Include secret file
+#  include_vars:
+#          file: secret.yml
+#          name: secret
+
+- name: Copy network interfaces
   template:
-          src: bridge-br0.netdev.j2
-          dest: /etc/systemd/network/bridge-br0.netdev
-
-- name: Copy bridge-br0.network
-  template:
-          src: bridge-br0.network.j2
-          dest: /etc/systemd/network/bridge-br0.network
-
-- name: Copy bridge-br0-slave.network
-  template:
-          src: bridge-br0-slave.network.j2
-          dest: /etc/systemd/network/bridge-br0-slave.network
-
-- name: Restart dnsmasq service
-  service:
-          name: systemd-networkd
-          state: restarted
-
-- name: Include secret file
-  include_vars:
-          file: secret.yml
-          name: secret
+          src: interfaces.j2
+          dest: /etc/network/interfaces
 
 - name: Copy hostapd.conf 
   template:
           src: hostapd.conf.j2
           dest: /etc/hostapd/hostapd.conf
 
-- name: Copy hostapd default configuration
+# or can change /etc/hostapd/hostapd.conf DAEMON_CONF="/etc/hostapd/hostapd.conf"
+- name: Copy hostapd default configuration 
   copy:
           src: hostapd
           dest: /etc/default/hostapd
@@ -126,6 +117,16 @@
 #          dest: /etc/rc.local
 #          insertbefore: "^exit 0"
 #          line: "iptables-restore < /etc/iptables.ipv4.nat"
+
+- name: Restart dhcpcd service
+  service:
+          name: dhcpcd
+          state: restarted 
+
+- name: Restart dnsmasq service
+  service:
+          name: dnsmasq
+          state: restarted
 
 - name: Reboot
   ansible.builtin.reboot:
