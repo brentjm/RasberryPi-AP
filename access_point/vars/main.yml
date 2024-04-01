@@ -18,6 +18,7 @@ wireless:
                 lease_time: 24h
         driver: nl80211
         ssid: disso
+        passphrase: pfizer2K
         mode: g # a = 5 Ghz and b/g = 2.4 Ghz
         channel: 7
         wpa:

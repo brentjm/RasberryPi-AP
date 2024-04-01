@@ -88,44 +88,44 @@
           enabled: yes
           state: restarted
  
-- name: Enable IP forwarding
-  sysctl:
-          name: net.ipv4.ip_forward
-          value: '1'
-          sysctl_set: yes
-          state: present
-          reload: yes  
-
-- name: Add iptables rule for POSTROUTING
-  iptables:
-          table: nat
-          chain: POSTROUTING
-          out_interface: "{{ ethernet.interface }}"
-          jump: MASQUERADE
-
-- name: Add iptables rule to forward traffic from ethernet to wireless interface
-  iptables:
-          chain: FORWARD
-          in_interface: "{{ ethernet.interface }}"
-          out_interface: "{{ wireless.interface }}"
-          ctstate: ESTABLISHED,RELATED
-          jump: ACCEPT
-
-- name: Add iptables rule to forward traffic from wireless to ethernet interface
-  iptables:
-          chain: FORWARD
-          in_interface: "{{ wireless.interface }}"
-          out_interface: "{{ ethernet.interface }}"
-          jump: ACCEPT
-
-- name: Save iptables rules
-  shell: "iptables-save > /etc/iptables.ipv4.nat"
-
-- name: Load iptables rules at startup
-  lineinfile:
-          dest: /etc/rc.local
-          insertbefore: "^exit 0"
-          line: "iptables-restore < /etc/iptables.ipv4.nat"
+#- name: Enable IP forwarding
+#  sysctl:
+#          name: net.ipv4.ip_forward
+#          value: '1'
+#          sysctl_set: yes
+#          state: present
+#          reload: yes  
+#
+#- name: Add iptables rule for POSTROUTING
+#  iptables:
+#          table: nat
+#          chain: POSTROUTING
+#          out_interface: "{{ ethernet.interface }}"
+#          jump: MASQUERADE
+#
+#- name: Add iptables rule to forward traffic from ethernet to wireless interface
+#  iptables:
+#          chain: FORWARD
+#          in_interface: "{{ ethernet.interface }}"
+#          out_interface: "{{ wireless.interface }}"
+#          ctstate: ESTABLISHED,RELATED
+#          jump: ACCEPT
+#
+#- name: Add iptables rule to forward traffic from wireless to ethernet interface
+#  iptables:
+#          chain: FORWARD
+#          in_interface: "{{ wireless.interface }}"
+#          out_interface: "{{ ethernet.interface }}"
+#          jump: ACCEPT
+#
+#- name: Save iptables rules
+#  shell: "iptables-save > /etc/iptables.ipv4.nat"
+#
+#- name: Load iptables rules at startup
+#  lineinfile:
+#          dest: /etc/rc.local
+#          insertbefore: "^exit 0"
+#          line: "iptables-restore < /etc/iptables.ipv4.nat"
 
 - name: Reboot
   ansible.builtin.reboot:

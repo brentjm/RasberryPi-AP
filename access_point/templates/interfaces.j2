@@ -1,0 +1,12 @@
+# {{ ansible_managed }} 
+
+# interfaces(5) file used by ifup(8) and ifdown(8)
+# Include files from /etc/network/interfaces.d:
+source /etc/network/interfaces.d/*
+
+allow-hotplug {{ wireless.interface }}
+iface {{ wireless.interface }} inet manual
+
+auto {{ bridge.interface }}
+iface {{ bridge.interface }} inet dhcp
+bridge_ports {{ ethernet.interface }} {{ wireless.interface}}
