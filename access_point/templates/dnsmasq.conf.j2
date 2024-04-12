@@ -1,4 +1,10 @@
 # {{ ansible_managed }} 
 
 interface={{ wireless.interface }}
-dhcp-range={{ wireless.dhcprange.start }},{{ wireless.dhcprange.end }},{{ wireless.dhcprange.mask }},{{ wireless.dhcprange.lease_time }}
+listen-address={{ wireless.ipv4.address }}
+bind-interfaces
+server=8.8.8.8
+domain-needed
+bogus-priv
+#dhcp-range={{ wireless.dhcprange.start }},{{ wireless.dhcprange.end }},{{ wireless.dhcprange.mask }},{{ wireless.dhcprange.lease_time }}
+dhcp-range={{ wireless.dhcprange.start }},{{ wireless.dhcprange.end }},{{ wireless.dhcprange.lease_time }}
