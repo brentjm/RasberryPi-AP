@@ -16,7 +16,3 @@ iface {{ wireless.interface }} inet static
     netmask {{ wireless.ipv4.netmask }}
     network {{ wireless.ipv4.network }}
     broadcast {{ wireless.ipv4.broadcast }}
-
-#auto {{ bridge.interface }}
-#iface {{ bridge.interface }} inet dhcp
-#bridge_ports {{ ethernet.interface }} {{ wireless.interface}}

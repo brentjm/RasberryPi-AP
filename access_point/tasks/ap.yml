@@ -1,0 +1,77 @@
+---
+
+- name: Update and upgrade system
+  ansible.builtin.apt:
+          update_cache: yes
+          upgrade: dist
+
+- name: Install necessary packages
+  ansible.builtin.apt:
+          name: "{{ packages }}"
+          state: present
+
+- name: Stop dnsmasq service
+  ansible.builtin.service:
+          name: dnsmasq
+          state: stopped
+
+- name: Stop hostapd service
+  ansible.builtin.service:
+          name: hostapd
+          state: stopped
+
+- name: Copy dhcpcd.conf
+  ansible.builtin.template:
+          src: dhcpcd.conf.j2
+          dest: /etc/dhcpcd.conf
+
+- name: Copy network interfaces
+  ansible.builtin.template:
+          src: interfaces.j2
+          dest: /etc/network/interfaces
+
+- name: Copy hostapd.conf 
+  ansible.builtin.template:
+          src: hostapd.conf.j2
+          dest: /etc/hostapd/hostapd.conf
+
+- name: Add location of hostapd startup script
+  ansible.builtin.lineinfile:
+          path: /etc/default/hostapd
+          regex: 'DAEMON_CONF='
+          line: DAEMON_CONF="/etc/hostapd/hostapd.conf"
+
+- name: Add additional daemon options to hostapd command
+  ansible.builtin.lineinfile:
+          path: /etc/default/hostapd
+          regex: 'DAEMON_CONF='
+          line: DAEMON_OPTS="-dd -t -f /var/log/hostapd.log"
+
+- name: Copy dnsmasq.conf 
+  ansible.builtin.template:
+          src: dnsmasq.conf.j2
+          dest: /etc/dnsmasq.conf
+          backup: true
+
+- name: Enable and start hostapd service
+  ansible.builtin.systemd:
+          name: hostapd
+          masked: no
+          enabled: yes
+          state: restarted
+ 
+- name: Restart dhcpcd service
+  ansible.builtin.service:
+          name: dhcpcd
+          state: restarted 
+
+- name: Restart dnsmasq service
+  ansible.builtin.service:
+          name: dnsmasq
+          state: restarted
+
+- name: Reboot
+  ansible.builtin.reboot:
+          reboot_timeout: 300
+          reboot_msg: "Rebooting the system"
+          post_reboot_delay: 30

@@ -3,21 +3,17 @@
 packages:
   - dnsmasq
   - hostapd
-#  - bridge-utils
-#  - iptables-persistent
 
 wireless:
   interface: wlan0
   ipv4:
-    address: 192.168.10.1
+    address: 192.168.5.1
     netmask: 255.255.255.0
-    mask: 24
-    network: 192.168.10.0
-    broadcast: 192.168.10.255
+    network: 192.168.5.0
+    broadcast: 192.168.5.255
   dhcprange:
-    start: 192.168.10.10
-    end: 192.168.10.200
-    mask: 255.255.255.0
+    start: 192.168.5.100
+    end: 192.168.5.200
     lease_time: 24h
   driver: nl80211
   ssid: disso
@@ -32,11 +28,3 @@ wireless:
 
 ethernet:
   interface: eth0
-
-bridge:
-  interface: br0
-  ipv4:
-    address: 192.168.1.10
-    mask: 24
-  gateway: 10.131.72.253
-  dns: 192.43.213.1

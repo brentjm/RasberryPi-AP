@@ -1,13 +1,13 @@
 # {{ ansible_managed }} 
 
 interface={{ wireless.interface }}
-#bridge={{ bridge.interface }}
-#driver={{ wireless.driver }}
+driver={{ wireless.driver }}
 ssid={{ wireless.ssid }}
 hw_mode={{ wireless.mode }}
 channel={{ wireless.channel }}
 ieee80211n=1
 wmm_enabled=0
+ht_capab=[HT40][SHORT-GI-20][DSSS_CCK-40]
 macaddr_acl=0
 auth_algs=1
 ignore_broadcast_ssid=0

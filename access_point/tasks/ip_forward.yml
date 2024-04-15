@@ -1,0 +1,46 @@
+---
+
+- name: Enable IP forwarding
+  ansible.builtin.sysctl:
+          name: net.ipv4.ip_forward
+          value: '1'
+          sysctl_set: yes
+          state: present
+          reload: yes  
+
+- name: Add iptables rule for POSTROUTING
+  ansible.builtin.iptables:
+          table: nat
+          chain: POSTROUTING
+          out_interface: "{{ ethernet.interface }}"
+          jump: MASQUERADE
+
+- name: Add iptables rule to forward traffic from ethernet to wireless interface
+  ansible.builtin.iptables:
+          chain: FORWARD
+          in_interface: "{{ ethernet.interface }}"
+          out_interface: "{{ wireless.interface }}"
+          ctstate: ESTABLISHED,RELATED
+          jump: ACCEPT
+
+- name: Add iptables rule to forward traffic from wireless to ethernet interface
+  ansible.builtin.iptables:
+          chain: FORWARD
+          in_interface: "{{ wireless.interface }}"
+          out_interface: "{{ ethernet.interface }}"
+          jump: ACCEPT
+
+- name: Save iptables rules
+  ansible.builtin.shell: "iptables-save > /etc/iptables.ipv4.nat"
+
+- name: Load iptables rules at startup
+  ansible.builtin.lineinfile:
+          dest: /etc/rc.local
+          insertbefore: "^exit 0"
+          line: "iptables-restore < /etc/iptables.ipv4.nat"
+
+- name: Reboot
+  ansible.builtin.reboot:
+          reboot_timeout: 300
+          reboot_msg: "Rebooting the system"
+          post_reboot_delay: 30
