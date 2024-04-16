@@ -44,7 +44,7 @@
 - name: Add additional daemon options to hostapd command
   ansible.builtin.lineinfile:
           path: /etc/default/hostapd
-          regex: 'DAEMON_CONF='
+          regex: 'DAEMON_OPTS='
           line: DAEMON_OPTS="-dd -t -f /var/log/hostapd.log"
 
 - name: Copy dnsmasq.conf 
@@ -70,8 +70,8 @@
           name: dnsmasq
           state: restarted
 
-- name: Reboot
-  ansible.builtin.reboot:
-          reboot_timeout: 300
-          reboot_msg: "Rebooting the system"
-          post_reboot_delay: 30
+#- name: Reboot
+#  ansible.builtin.reboot:
+#          reboot_timeout: 300
+#          reboot_msg: "Rebooting the system"
+#          post_reboot_delay: 30
