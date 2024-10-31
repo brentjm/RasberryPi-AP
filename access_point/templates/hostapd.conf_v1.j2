@@ -1,0 +1,17 @@
+# {{ ansible_managed }} 
+
+interface={{ wireless.interface }}
+driver={{ wireless.driver }}
+ssid={{ wireless.ssid }}
+hw_mode={{ wireless.mode }}
+channel={{ wireless.channel }}
+ieee80211n=1
+wmm_enabled=0
+macaddr_acl=0
+auth_algs=1
+ignore_broadcast_ssid=0
+wpa={{ wireless.wpa.version }}
+wpa_passphrase={{ wireless.wpa.passphrase }}
+wpa_key_mgmt={{ wireless.wpa.key_mgmt }}
+wpa_pairwise={{ wireless.wpa.pairwise }}
+rsn_pairwise={{ wireless.wpa.rsn_pairwise }}
