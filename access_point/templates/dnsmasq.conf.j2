@@ -1,4 +1,7 @@
 # {{ ansible_managed }} 
 
 interface={{ wireless.interface }}
+bind-dynamic
+domain-needed
+bogus-priv
 dhcp-range={{ wireless.dhcprange.start }},{{ wireless.dhcprange.end }},{{ wireless.dhcprange.mask }},{{ wireless.dhcprange.lease_time }}
