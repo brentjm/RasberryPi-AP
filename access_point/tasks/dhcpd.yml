@@ -2,5 +2,5 @@
 
 - name: Copy dhcpcd.conf
   ansible.builtin.template:
-          src: dhcpcd.conf.j2
+          src: dhcpcd.conf_v2.j2
           dest: /etc/dhcpcd.conf
