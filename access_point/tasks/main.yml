@@ -1,12 +1,12 @@
 ---
 
 - name: Update and upgrade system
-  apt:
+  ansible.builtin.apt:
           update_cache: yes
           upgrade: dist
 
 - name: Install necessary packages
-  apt:
+  ansible.builtin.apt:
           name: "{{ packages }}"
           state: present
 
@@ -14,92 +14,92 @@
   hosts: all
   tasks:
     - name: Gather facts
-      setup:
+      ansible.builtin.setup:
  
     - name: Print init system
-      debug:
+      ansible.builtin.debug:
         msg: "Init system is {{ ansible_facts['ansible_service_mgr'] }}"
 
 - name: Stop dnsmasq service
-  service:
+  ansible.builtin.service:
           name: dnsmasq
           state: stopped
 
 - name: Stop hostapd service
-  service:
+  ansible.builtin.service:
           name: hostapd
           state: stopped
 
 - name: Add bridge interface
-  shell: /sbin/brctl addbr {{ bridge.interface }}
+  ansible.builtin.shell: /sbin/brctl addbr {{ bridge.interface }}
 
 - name: Add ethernet interface to bridge
-  shell: /sbin/brctl addif {{ bridge.interface }} {{ ethernet.interface }}
+  ansible.builtin.shell: /sbin/brctl addif {{ bridge.interface }} {{ ethernet.interface }}
 
 - name: Copy dhcpcd.conf
-  template:
+  ansible.builtin.template:
           src: dhcpcd.conf.j2
           dest: /etc/dhcpcd.conf
 
 - name: Copy dnsmasq.conf 
-  template:
+  ansible.builtin.template:
           src: dnsmasq.conf.j2
           dest: /etc/dnsmasq.conf
 
 - name: Restart dhcpcd service
-  service:
+  ansible.builtin.service:
           name: dhcpcd
           state: restarted 
 
 - name: Restart dnsmasq service
-  service:
+  ansible.builtin.service:
           name: dnsmasq
           state: restarted
 
 - name: Copy bridge-br0.netdev
-  template:
+  ansible.builtin.template:
           src: bridge-br0.netdev.j2
           dest: /etc/systemd/network/bridge-br0.netdev
 
 - name: Copy bridge-br0.network
-  template:
+  ansible.builtin.template:
           src: bridge-br0.network.j2
           dest: /etc/systemd/network/bridge-br0.network
 
 - name: Copy bridge-br0-slave.network
-  template:
+  ansible.builtin.template:
           src: bridge-br0-slave.network.j2
           dest: /etc/systemd/network/bridge-br0-slave.network
 
 - name: Restart dnsmasq service
-  service:
+  ansible.builtin.service:
           name: systemd-networkd
           state: restarted
 
 - name: Include secret file
-  include_vars:
+  ansible.builtin.include_vars:
           file: secret.yml
           name: secret
 
 - name: Copy hostapd.conf 
-  template:
+  ansible.builtin.template:
           src: hostapd.conf.j2
           dest: /etc/hostapd/hostapd.conf
 
 - name: Copy hostapd default configuration
-  copy:
+  ansible.builtin.copy:
           src: hostapd
           dest: /etc/default/hostapd
 
 - name: Enable and start hostapd service
-  systemd:
+  ansible.builtin.systemd:
           name: hostapd
           masked: no
           enabled: yes
           state: restarted
  
 - name: Enable IP forwarding
-  sysctl:
+  ansible.builtin.sysctl:
           name: net.ipv4.ip_forward
           value: '1'
           sysctl_set: yes
@@ -107,14 +107,14 @@
           reload: yes  
 
 - name: Add iptables rule for POSTROUTING
-  iptables:
+  ansible.builtin.iptables:
           table: nat
           chain: POSTROUTING
           out_interface: "{{ ethernet.interface }}"
           jump: MASQUERADE
 
 - name: Add iptables rule to forward traffic from ethernet to wireless interface
-  iptables:
+  ansible.builtin.iptables:
           chain: FORWARD
           in_interface: "{{ ethernet.interface }}"
           out_interface: "{{ wireless.interface }}"
@@ -122,17 +122,17 @@
           jump: ACCEPT
 
 - name: Add iptables rule to forward traffic from wireless to ethernet interface
-  iptables:
+  ansible.builtin.iptables:
           chain: FORWARD
           in_interface: "{{ wireless.interface }}"
           out_interface: "{{ ethernet.interface }}"
           jump: ACCEPT
 
 - name: Save iptables rules
-  shell: "iptables-save > /etc/iptables.ipv4.nat"
+  ansible.builtin.shell: "iptables-save > /etc/iptables.ipv4.nat"
 
 - name: Load iptables rules at startup
-  lineinfile:
+  ansible.builtin.lineinfile:
           dest: /etc/rc.local
           insertbefore: "^exit 0"
           line: "iptables-restore < /etc/iptables.ipv4.nat"
