@@ -38,4 +38,3 @@
           dest: /etc/rc.local
           insertbefore: "^exit 0"
           line: "iptables-restore < /etc/iptables.ipv4.nat"
-

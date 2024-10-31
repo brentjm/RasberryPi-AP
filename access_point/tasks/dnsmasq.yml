@@ -4,4 +4,3 @@
   ansible.builtin.template:
           src: dnsmasq.conf.j2
           dest: /etc/dnsmasq.conf
-
