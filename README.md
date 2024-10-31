@@ -5,6 +5,9 @@
 * Ansible >= 2.8
 * Raspberry Pi 3 or 4
 
+## Caveats
+The playbook is designed to work with systemd.
+
 ## Usage
 
 1. Modify the configuration in `access_point/vars/main.yml` (ssid, interfaces etc...)
