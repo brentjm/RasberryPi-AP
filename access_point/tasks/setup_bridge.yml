@@ -1,0 +1,23 @@
+---
+
+- name: Add bridge interface
+  ansible.builtin.shell: /sbin/brctl addbr {{ bridge.interface }}
+
+- name: Add ethernet interface to bridge
+  ansible.builtin.shell: /sbin/brctl addif {{ bridge.interface }} {{ ethernet.interface }}
+
+- name: Copy bridge-br0.network
+  ansible.builtin.template:
+          src: bridge-br0.network.j2
+          dest: /etc/systemd/network/bridge-br0.network
+
+- name: Copy bridge-br0.netdev
+  ansible.builtin.template:
+          src: bridge-br0.netdev.j2
+          dest: /etc/systemd/network/bridge-br0.netdev
+
+- name: Copy bridge-br0-slave.network
+  ansible.builtin.template:
+          src: bridge-br0-slave.network.j2
+          dest: /etc/systemd/network/bridge-br0-slave.network
+

@@ -1,0 +1,19 @@
+---
+
+- name: Copy hostapd.conf 
+  ansible.builtin.template:
+          src: hostapd.conf.j2
+          dest: /etc/hostapd/hostapd.conf
+
+- name: Copy hostapd default configuration
+  ansible.builtin.copy:
+          src: hostapd
+          dest: /etc/default/hostapd
+
+- name: Enable and start hostapd service
+  ansible.builtin.systemd_service:
+          name: hostapd
+          masked: no
+          enabled: yes
+          state: restarted
+ 

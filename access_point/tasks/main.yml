@@ -20,122 +20,31 @@
       ansible.builtin.debug:
         msg: "Init system is {{ ansible_facts['ansible_service_mgr'] }}"
 
-- name: Stop dnsmasq service
-  ansible.builtin.systemd_service:
-          name: dnsmasq
-          state: stopped
-
-- name: Stop hostapd service
-  ansible.builtin.systemd_service:
-          name: hostapd
-          state: stopped
-
-- name: Add bridge interface
-  ansible.builtin.shell: /sbin/brctl addbr {{ bridge.interface }}
-
-- name: Add ethernet interface to bridge
-  ansible.builtin.shell: /sbin/brctl addif {{ bridge.interface }} {{ ethernet.interface }}
-
-- name: Copy dhcpcd.conf
-  ansible.builtin.template:
-          src: dhcpcd.conf.j2
-          dest: /etc/dhcpcd.conf
-
-- name: Copy dnsmasq.conf 
-  ansible.builtin.template:
-          src: dnsmasq.conf.j2
-          dest: /etc/dnsmasq.conf
-
-- name: Restart dhcpcd service
-  ansible.builtin.systemd_service:
-          name: dhcpcd
-          state: restarted 
-
-- name: Restart dnsmasq service
-  ansible.builtin.systemd_service:
-          name: dnsmasq
-          state: restarted
-
-- name: Copy bridge-br0.netdev
-  ansible.builtin.template:
-          src: bridge-br0.netdev.j2
-          dest: /etc/systemd/network/bridge-br0.netdev
-
-- name: Copy bridge-br0.network
-  ansible.builtin.template:
-          src: bridge-br0.network.j2
-          dest: /etc/systemd/network/bridge-br0.network
-
-- name: Copy bridge-br0-slave.network
-  ansible.builtin.template:
-          src: bridge-br0-slave.network.j2
-          dest: /etc/systemd/network/bridge-br0-slave.network
-
-- name: Restart dnsmasq service
-  ansible.builtin.systemd_service:
-          name: systemd-networkd
-          state: restarted
-
 - name: Include secret file
   ansible.builtin.include_vars:
           file: secret.yml
           name: secret
 
-- name: Copy hostapd.conf 
-  ansible.builtin.template:
-          src: hostapd.conf.j2
-          dest: /etc/hostapd/hostapd.conf
+- name: Stop services
+  ansible.builtin.include_tasks: stop_services.yml
 
-- name: Copy hostapd default configuration
-  ansible.builtin.copy:
-          src: hostapd
-          dest: /etc/default/hostapd
+- name: Add bridge interface
+  ansible.builtin.include_tasks: bridge.yml
 
-- name: Enable and start hostapd service
-  ansible.builtin.systemd_service:
-          name: hostapd
-          masked: no
-          enabled: yes
-          state: restarted
- 
-- name: Enable IP forwarding
-  ansible.builtin.sysctl:
-          name: net.ipv4.ip_forward
-          value: '1'
-          sysctl_set: yes
-          state: present
-          reload: yes  
+- name: Configure hostapd
+  ansible.builtin.include_tasks: hostapd.yml
 
-- name: Add iptables rule for POSTROUTING
-  ansible.builtin.iptables:
-          table: nat
-          chain: POSTROUTING
-          out_interface: "{{ ethernet.interface }}"
-          jump: MASQUERADE
+- name: Configure dnsmasq
+  ansible.builtin.include_tasks: dnsmasq.yml
 
-- name: Add iptables rule to forward traffic from ethernet to wireless interface
-  ansible.builtin.iptables:
-          chain: FORWARD
-          in_interface: "{{ ethernet.interface }}"
-          out_interface: "{{ wireless.interface }}"
-          ctstate: ESTABLISHED,RELATED
-          jump: ACCEPT
+- name: Configure dhcpcd
+  ansible.builtin.include_tasks: dhcpcd.yml
 
-- name: Add iptables rule to forward traffic from wireless to ethernet interface
-  ansible.builtin.iptables:
-          chain: FORWARD
-          in_interface: "{{ wireless.interface }}"
-          out_interface: "{{ ethernet.interface }}"
-          jump: ACCEPT
+- name: Restart services
+  ansible.builtin.include_tasks: restart_services.yml
 
-- name: Save iptables rules
-  ansible.builtin.shell: "iptables-save > /etc/iptables.ipv4.nat"
-
-- name: Load iptables rules at startup
-  ansible.builtin.lineinfile:
-          dest: /etc/rc.local
-          insertbefore: "^exit 0"
-          line: "iptables-restore < /etc/iptables.ipv4.nat"
+- name: Forward IPv4
+  ansible.builtin.include_tasks: ipv4_forward.yml
 
 - name: Reboot
   ansible.builtin.reboot:

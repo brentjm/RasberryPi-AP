@@ -1,0 +1,17 @@
+---
+
+- name: Restart systemd-networkd service
+  ansible.builtin.systemd_service:
+          name: systemd-networkd
+          state: restarted
+
+- name: Restart dnsmasq service
+  ansible.builtin.systemd_service:
+          name: dnsmasq
+          state: restarted
+
+- name: Restart dhcpcd service
+  ansible.builtin.systemd_service:
+          name: dhcpcd
+          state: restarted 
+
