@@ -25,6 +25,7 @@ wireless:
                 key_mgmt: WPA-PSK
                 pairwise: TKIP
                 rsn_pairwise: CCMP
+                passphrase: SmartLab123
 
 ethernet:
         interface: eth0
