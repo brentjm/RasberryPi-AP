@@ -10,6 +10,16 @@
           name: "{{ packages }}"
           state: present
 
+- name: Check init system
+  hosts: all
+  tasks:
+    - name: Gather facts
+      setup:
+ 
+    - name: Print init system
+      debug:
+        msg: "Init system is {{ ansible_facts['ansible_service_mgr'] }}"
+
 - name: Stop dnsmasq service
   service:
           name: dnsmasq
