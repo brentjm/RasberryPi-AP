@@ -1,0 +1,11 @@
+---
+
+- name: Stop dnsmasq service
+  ansible.builtin.systemd_service:
+          name: dnsmasq
+          state: stopped
+
+- name: Stop hostapd service
+  ansible.builtin.systemd_service:
+          name: hostapd
+          state: stopped
