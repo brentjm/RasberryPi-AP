@@ -19,7 +19,7 @@
 
 - name: Print init system
   ansible.builtin.debug:
-    msg: "Init system is {{ ansible_facts['ansible_service_mgr'] }}"
+    msg: "Init system is {{ ansible_facts['service_mgr'] }}"
 
 - name: Setup WiFi access point using specific tutorial
   ansible.builtin.include_tasks: ap_v1.yml
