@@ -9,7 +9,7 @@ packages:
 wireless:
         interface: wlan0
         ipv4:
-                address: 192.168.10.101
+                address: 192.168.10.10
                 mask: 24
                 gateway: 192.168.10.1
         dhcprange:

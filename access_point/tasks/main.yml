@@ -10,44 +10,16 @@
           name: "{{ packages }}"
           state: present
 
-- name: Check init system
-  hosts: all
-  tasks:
-    - name: Gather facts
-      ansible.builtin.setup:
- 
-    - name: Print init system
-      ansible.builtin.debug:
-        msg: "Init system is {{ ansible_facts['ansible_service_mgr'] }}"
+- name: Gather facts
+  ansible.builtin.setup:
 
-- name: Include secret file
-  ansible.builtin.include_vars:
-          file: secret.yml
-          name: secret
+- name: Print all gathered facts
+  ansible.builtin.debug:
+    var: ansible_facts
 
-- name: Stop services
-  ansible.builtin.include_tasks: stop_services.yml
+- name: Print init system
+  ansible.builtin.debug:
+    msg: "Init system is {{ ansible_facts['ansible_service_mgr'] }}"
 
-- name: Add bridge interface
-  ansible.builtin.include_tasks: bridge.yml
-
-- name: Configure hostapd
-  ansible.builtin.include_tasks: hostapd.yml
-
-- name: Configure dnsmasq
-  ansible.builtin.include_tasks: dnsmasq.yml
-
-- name: Configure dhcpcd
-  ansible.builtin.include_tasks: dhcpcd.yml
-
-- name: Restart services
-  ansible.builtin.include_tasks: restart_services.yml
-
-- name: Forward IPv4
-  ansible.builtin.include_tasks: ipv4_forward.yml
-
-- name: Reboot
-  ansible.builtin.reboot:
-          reboot_timeout: 300
-          reboot_msg: "Rebooting the system"
-          post_reboot_delay: 30
+- name: Setup WiFi access point using specific tutorial
+  ansible.builtin.include_tasks: ap_v1.yml

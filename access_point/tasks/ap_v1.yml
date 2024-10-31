@@ -1,0 +1,15 @@
+---
+# These tasks follow the tutorial from
+# https://raspberrytips.com/access-point-setup-raspberry-pi/
+
+- name: Configure hostapd
+  ansible.builtin.include_tasks: hostapd_v1.yml
+
+- name: Configure dnsmasq
+  ansible.builtin.include_tasks: dnsmasq.yml
+
+- name: Configure dhcpcd
+  ansible.builtin.include_tasks: dhcpcd_v1.yml
+
+- name: Configure iptables
+  ansible.builtin.include_tasks: ipv4_forward_v1.yml

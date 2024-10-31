@@ -1,0 +1,33 @@
+---
+
+- name: Include secret file
+  ansible.builtin.include_vars:
+          file: secret.yml
+          name: secret
+
+- name: Stop services
+  ansible.builtin.include_tasks: stop_services.yml
+
+- name: Add bridge interface
+  ansible.builtin.include_tasks: bridge.yml
+
+- name: Configure hostapd
+  ansible.builtin.include_tasks: hostapd_v2.yml
+
+- name: Configure dnsmasq
+  ansible.builtin.include_tasks: dnsmasq.yml
+
+- name: Configure dhcpcd
+  ansible.builtin.include_tasks: dhcpcd_v2.yml
+
+- name: Restart services
+  ansible.builtin.include_tasks: restart_services.yml
+
+- name: Forward IPv4
+  ansible.builtin.include_tasks: ipv4_forward_v2.yml
+
+- name: Reboot
+  ansible.builtin.reboot:
+          reboot_timeout: 300
+          reboot_msg: "Rebooting the system"
+          post_reboot_delay: 30
